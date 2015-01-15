@@ -5,4 +5,5 @@
 <asp:Label ID="SimpleMsg" runat="server"></asp:Label>
 
 <p>[Custom User Control: MemberProfileStatusUpdater.ascx]</p>
+<input type="hidden" id="activityTypeValue" value="">
 <asp:DataGrid ID="dgTest" runat="server"></asp:DataGrid>

@@ -1,0 +1,7 @@
+﻿/* When the menu bar is fixed to the top, the body of the page needs to be lowered to give it room. */
+@media (min-width: 1112px) {
+    body {
+        padding-top: 60px !important;
+        padding-bottom: 42px !important;
+    }
+}

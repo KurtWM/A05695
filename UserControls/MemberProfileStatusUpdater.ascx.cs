@@ -28,6 +28,7 @@ namespace ArenaWeb.Custom.A05695.UserControls
         private Profile _profile;
         private ProfileMember _profileMember;
         private List<int> ServingActivityTypeIds;
+        private String ddlTypeClientID;
         protected DropDownList ddlType;
         protected Button btnAdd;
 
@@ -51,8 +52,12 @@ namespace ArenaWeb.Custom.A05695.UserControls
 
         protected override void OnInit(EventArgs e)
         {
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "onInitScript1", "alert('OnInit is firing.');", true);
             this.InitializeComponent();
             base.OnInit(e);
+            ddlTypeClientID = ddlType.ClientID;
+            RegisterScripts(ddlTypeClientID);
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "onInitScript2", "alert('" + ddlType.ClientID + "');", true);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -172,7 +177,7 @@ namespace ArenaWeb.Custom.A05695.UserControls
             //DropDownList ddlType = ArenaWeb.UserControls.Core.ProfileMemberActivityList.FindControlRecursive(this.Page, "ddlType") as DropDownList;
 
             //ScriptManager.RegisterStartupScript(Page, this.GetType(), "ddlTypeExists", "alert('ddlType exists: " + Convert.ToBoolean(ddlType != null).ToString() + "');", true);
-            ScriptManager.RegisterStartupScript(Page, this.GetType(), "testblah", "alert('test');", true);
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "testblah", "alert(document.getElementById('" + ddlTypeClientID + "').value);", true);
 
             //if (Convert.ToBoolean(ServingActivityTypeIds.Contains(Int32.Parse(ddlType.SelectedValue))))
             //{
@@ -209,6 +214,25 @@ namespace ArenaWeb.Custom.A05695.UserControls
             //ddlType.AutoPostBack = true;
             //ddlType.SelectedIndexChanged += ddlType_SelectedIndexChanged;
         }
+
+        /// <summary>
+        /// Add JavaScript code to the page.</summary>
+        /// 
+        private void RegisterScripts(String ddlTypeID)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("\n\n<script type=\"text/javascript\">\n");
+            stringBuilder.Append("\t$(document).ready(function () {\n");
+            stringBuilder.Append("\t\t$('#" + ddlTypeID + "').change(function() {\n");
+            stringBuilder.Append("\t\t\tvar x = $(this).val();\n");
+            stringBuilder.Append("\t\t\t$('#activityTypeValue').val(x);\n");
+            stringBuilder.Append("\t\t\talert( $('#activityTypeValue').val(x) );\n");
+            stringBuilder.Append("\t\t\t});\n");
+            stringBuilder.Append("\t\t});\n");
+            stringBuilder.Append("</script>\n\n");
+            this.Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "activityTypeChangeScript", ((object)stringBuilder).ToString());
+        }
+
 
         
     }

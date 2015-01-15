@@ -1,0 +1,123 @@
+﻿/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+/* Need to fix TreeView icon img tags because they use attributes to set height and width.
+   Bootstrap sets defaults for img tags, so we need to set the size by brute force. */
+.TreeView img
+{
+  height: 16px !important;
+  max-width: 16px !important;
+}
+
+/* Body and structure
+-------------------------------------------------- */
+
+body {
+  position: relative !important;
+  padding-top: 150px !important;
+}
+
+#site-logo 
+{
+  margin-left: 40px;
+}
+
+/* Social bar
+-------------------------------------------------- */
+#social-bar {
+  color: #AAA;
+  background-color: #262626;
+  height: 25px;
+  border-bottom: 2px solid #A5A5A5;
+}
+
+/* ID bar
+-------------------------------------------------- */
+#id-bar {
+  color: #AAA;
+  background-color: #FA4913;
+  background-image: url(/Content/HtmlImages/Public/Images/General/warmCoolFracturedBackground.jpg);
+  height: 70px;
+  border-bottom: 2px solid #A5A5A5;
+  top: 27px;
+}
+
+/* Navbar
+-------------------------------------------------- */
+#nav-bar
+{
+  /*top: 20px;*/
+}
+
+.navbar
+{
+  top: 99px !important;
+}
+
+.navbar-inner ul.nav li a
+{
+  font-size: 1.125em;
+  font-weight: bold;
+}
+
+.navbar-inner ul.nav li.dropdown ul.dropdown-menu li a
+{
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.navbar-userinfo
+{
+  line-height: 26px;
+  padding-left: 40px;
+}
+
+.navbar-social
+{
+  line-height: 26px;
+  padding-right: 40px;
+}
+
+/* Dropdown Menu
+-------------------------------------------------- */
+/* Raise dropdown a bit so that it overlaps the control that triggers the hover. */
+.dropdown-menu
+{
+  margin-top: -2px;
+}
+
+/* Make dropdowns activate on hover except when navigation is collapsed by max-width */
+@media (min-width: 979px)
+{
+  ul.nav li.dropdown:hover > ul.dropdown-menu
+  {
+    display: block;    
+  }
+}
+
+/* Make dropdowns inactivate on hover when the navigation is collapsed. */
+/*@media (max-width: 979px)
+{
+  .nav-collapse .dropdown-menu 
+  {
+    display: none;
+  }
+}*/
+
+/* Remove the carat symbol from the dropdown trigger, if desired.
+.nav li.dropdown > a .caret {
+  display: none;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
