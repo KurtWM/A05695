@@ -65,6 +65,9 @@ namespace ArenaWeb.Custom.A05695.UserControls
             int num = -1;
             int personID = -1;
 
+            ActivityTypeValue.Value = ddlType.SelectedValue;
+            ActivityTypeIDs.Value = ServingActivityTypeIDSetting;
+
             // If values for "Profile" and "Person" are in the page's querystring, use their values.
             foreach (string name in this.Request.QueryString.AllKeys)
             {
@@ -134,7 +137,7 @@ namespace ArenaWeb.Custom.A05695.UserControls
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "continueModule", "alert('STATUS is NOT set to desired value.');", true);
                 
                 
-                ServingActivityTypeIds = ServingActivityTypeIDSetting.Split(',').Select(int.Parse).ToList();
+                //ServingActivityTypeIds = ServingActivityTypeIDSetting.Split(',').Select(int.Parse).ToList();
                 ShowTestData();
             }
         }
@@ -146,23 +149,12 @@ namespace ArenaWeb.Custom.A05695.UserControls
         /// <param name="eventTypeId">The ID of the event being tested.</param>
         private void ShowTestData()
         {
-            //if (this.Page.IsPostBack)
-            //{
-            //Page.ClientScript.RegisterStartupScript(this.GetType(), "Alerts", "alert('test');");
-            //}
-            //List<int> ServingActivityTypeIds = ServingActivityTypeIDSetting.Split(',').Select(int.Parse).ToList();
-
-            SimpleMsg.Text += "<br />ServingActivityTypeIds item count: " + ServingActivityTypeIds.Count.ToString();
             SimpleMsg.Text += "<br />PersonID: " + this._profileMember.PersonID;
             SimpleMsg.Text += "<br />ProfileID: " + this._profileMember.ProfileID;
             SimpleMsg.Text += "<br />ServingActivityTypeIDSetting: " + ServingActivityTypeIDSetting;
-            SimpleMsg.Text += "<br />ServingActivityTypeIds: " + ServingActivityTypeIds.ToString();
             SimpleMsg.Text += "<br />TagMemberStatusId: " + TagMemberStatusId;
             ProfileMember _profileMember = new ProfileMember(this._profileMember.ProfileID, this._profileMember.PersonID);
             SimpleMsg.Text += "<br />_profileMember.Status.LookupID: " + _profileMember.Status.LookupID;
-            //SimpleMsg.Text += "<br />Member Status update is required = " + Convert.ToBoolean(TagMemberStatusId = _profileMember.Status.LookupID).ToString();
-            //SimpleMsg.Text += "<br />Profile Member Status ID is in the Serving Activity IDs = " + Convert.ToBoolean(ServingActivityTypeIds.IndexOf(_profileMember.Status.LookupID) != -1);
-            SimpleMsg.Text += "<br />Profile Member Status ID is in the Serving Activity IDs = " + Convert.ToBoolean(ServingActivityTypeIds.Contains(270));
 
             DataTable dataTable1;
             dataTable1 = new ProfileMemberActivityData().GetProfileMemberActivityDetailsByProfileID_DT(this._profileMember.ProfileID, this.CurrentArenaContext.SelectedProfile.ProfileType, this.CurrentPerson.PersonID, this._profileMember.PersonID, ArenaContext.Current.Organization.OrganizationID);
@@ -172,25 +164,15 @@ namespace ArenaWeb.Custom.A05695.UserControls
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-
-            // Get the Activity Type dropdown list from the "ProfileMemberActivityList" module so we can get the selected value.
-            //DropDownList ddlType = ArenaWeb.UserControls.Core.ProfileMemberActivityList.FindControlRecursive(this.Page, "ddlType") as DropDownList;
-
-            //ScriptManager.RegisterStartupScript(Page, this.GetType(), "ddlTypeExists", "alert('ddlType exists: " + Convert.ToBoolean(ddlType != null).ToString() + "');", true);
-            ScriptManager.RegisterStartupScript(Page, this.GetType(), "testblah", "alert(document.getElementById('" + ddlTypeClientID + "').value);", true);
-
-            //if (Convert.ToBoolean(ServingActivityTypeIds.Contains(Int32.Parse(ddlType.SelectedValue))))
-            //{
+            //ScriptManager.RegisterStartupScript(Page, this.GetType(), "testblah", "alert(document.getElementById('" + ddlTypeClientID + "').value);", true);
+            ServingActivityTypeIds = ActivityTypeIDs.Value.Split(',').Select(int.Parse).ToList();
+            if (Convert.ToBoolean(ServingActivityTypeIds.Contains(Int32.Parse(ActivityTypeValue.Value))))
+            {
                 ProfileMember _profileMember = new ProfileMember(this._profileMember.ProfileID, this._profileMember.PersonID);
                 SaveProfileMember(_profileMember);
                 Response.Redirect(HttpContext.Current.Request.Url.ToString(), false);
-            //}
+            }
         }
-
-        //void ddlType_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    ScriptManager.RegisterStartupScript(Page, this.GetType(), "typeChanged", "alert('ddlType dropdownlist has had its selection changed.')", true);
-        //}
 
         protected void SaveProfileMember(ProfileMember pm)
         {
@@ -225,8 +207,8 @@ namespace ArenaWeb.Custom.A05695.UserControls
             stringBuilder.Append("\t$(document).ready(function () {\n");
             stringBuilder.Append("\t\t$('#" + ddlTypeID + "').change(function() {\n");
             stringBuilder.Append("\t\t\tvar x = $(this).val();\n");
-            stringBuilder.Append("\t\t\t$('#activityTypeValue').val(x);\n");
-            stringBuilder.Append("\t\t\talert( $('#activityTypeValue').val(x) );\n");
+            stringBuilder.Append("\t\t\t$('#" + ActivityTypeValue.ClientID + "').val(x);\n");
+            stringBuilder.Append("\t\t\talert( $('#" + ActivityTypeValue.ClientID + "').val() );\n");
             stringBuilder.Append("\t\t\t});\n");
             stringBuilder.Append("\t\t});\n");
             stringBuilder.Append("</script>\n\n");
