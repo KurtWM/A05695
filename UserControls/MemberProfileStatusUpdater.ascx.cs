@@ -21,10 +21,7 @@ namespace ArenaWeb.Custom.A05695.UserControls
 {
     public partial class MemberProfileStatusUpdater : PortalControl
     {
-        protected string errMsg = "";
-        protected int TagMemberStatusId;
-        protected int LatestProfileActivityId;
-
+        //protected string errMsg = "";
         private Profile _profile;
         private ProfileMember _profileMember;
         private List<int> ServingActivityTypeIds;
@@ -32,32 +29,30 @@ namespace ArenaWeb.Custom.A05695.UserControls
         protected DropDownList ddlType;
         protected Button btnAdd;
 
-        [ListFromSqlSetting("Serving Activity Types", "Activity Types that will trigger a status update for a member who has volunteered.", false, "", "SELECT lookup_id, lookup_value FROM core_lookup WHERE lookup_type_id = 36 AND active = 1 AND organization_id = 1 ORDER BY lookup_value", ListSelectionMode.Multiple)]
+        [ListFromSqlSetting("Serving Activity Types", "Activity Types that, if added to a profile, will trigger a status update. Multiple Activity Types may be selected.", true, "", "SELECT lookup_id, lookup_value FROM core_lookup WHERE lookup_type_id = 36 AND active = 1 AND organization_id = 1 ORDER BY lookup_value", ListSelectionMode.Multiple)]
         public string ServingActivityTypeIDSetting
         {
             get
             {
-                return Setting("ServingActivityTypeID", "", false);
+                return Setting("ServingActivityTypeID", "", true);
             }
         }
 
-        [ListFromSqlSetting("Member Status", "If any of the indicated Serving Activity Types are added to a person, that person's status will be set to this value.", false, "", "SELECT lookup_id, lookup_value FROM core_lookup WHERE lookup_type_id = 35 AND active = 1 AND organization_id = 1 ORDER BY lookup_value", ListSelectionMode.Single)]
+        [ListFromSqlSetting("Member Status", "If any of the selected Serving Activity Types are added to a person, that person's status will be set to this value.", true, "", "SELECT lookup_id, lookup_value FROM core_lookup WHERE lookup_type_id = 35 AND active = 1 AND organization_id = 1 ORDER BY lookup_value", ListSelectionMode.Single)]
         public string TagMemberStatusIDSetting
         {
             get
             {
-                return Setting("TagMemberStatusID", "", false);
+                return Setting("TagMemberStatusID", "", true);
             }
         }
 
         protected override void OnInit(EventArgs e)
         {
-            ScriptManager.RegisterStartupScript(Page, this.GetType(), "onInitScript1", "alert('OnInit is firing.');", true);
             this.InitializeComponent();
             base.OnInit(e);
             ddlTypeClientID = ddlType.ClientID;
             RegisterScripts(ddlTypeClientID);
-            ScriptManager.RegisterStartupScript(Page, this.GetType(), "onInitScript2", "alert('" + ddlType.ClientID + "');", true);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -117,9 +112,6 @@ namespace ArenaWeb.Custom.A05695.UserControls
                     return;
                 }
             }
-
-            TagMemberStatusId = Int32.Parse(TagMemberStatusIDSetting);
-
             CheckMemberStatus();
         }
 
@@ -129,46 +121,21 @@ namespace ArenaWeb.Custom.A05695.UserControls
         {
             if (_profileMember.Status.LookupID == Int32.Parse(TagMemberStatusIDSetting)) 
             {
-                //this.Visible = false;
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "closeModule", "alert('STATUS is already set to desired value.');", true);
+                this.Visible = false;
+                //ScriptManager.RegisterStartupScript(Page, this.GetType(), "closeModule", "alert('STATUS is already set to desired value.');", true);
             }
             else
             {
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "continueModule", "alert('STATUS is NOT set to desired value.');", true);
-                
-                
-                //ServingActivityTypeIds = ServingActivityTypeIDSetting.Split(',').Select(int.Parse).ToList();
-                ShowTestData();
+                //ScriptManager.RegisterStartupScript(Page, this.GetType(), "continueModule", "alert('STATUS is NOT set to desired value.');", true);
             }
-        }
-
-
-
-        /// <summary>
-        /// Returns true if the Event Type ID is found in the TagMemberStatusIDSetting array.</summary>
-        /// <param name="eventTypeId">The ID of the event being tested.</param>
-        private void ShowTestData()
-        {
-            SimpleMsg.Text += "<br />PersonID: " + this._profileMember.PersonID;
-            SimpleMsg.Text += "<br />ProfileID: " + this._profileMember.ProfileID;
-            SimpleMsg.Text += "<br />ServingActivityTypeIDSetting: " + ServingActivityTypeIDSetting;
-            SimpleMsg.Text += "<br />TagMemberStatusId: " + TagMemberStatusId;
-            ProfileMember _profileMember = new ProfileMember(this._profileMember.ProfileID, this._profileMember.PersonID);
-            SimpleMsg.Text += "<br />_profileMember.Status.LookupID: " + _profileMember.Status.LookupID;
-
-            DataTable dataTable1;
-            dataTable1 = new ProfileMemberActivityData().GetProfileMemberActivityDetailsByProfileID_DT(this._profileMember.ProfileID, this.CurrentArenaContext.SelectedProfile.ProfileType, this.CurrentPerson.PersonID, this._profileMember.PersonID, ArenaContext.Current.Organization.OrganizationID);
-            dgTest.DataSource = (object)dataTable1;
-            dgTest.DataBind();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            //ScriptManager.RegisterStartupScript(Page, this.GetType(), "testblah", "alert(document.getElementById('" + ddlTypeClientID + "').value);", true);
             ServingActivityTypeIds = ActivityTypeIDs.Value.Split(',').Select(int.Parse).ToList();
             if (Convert.ToBoolean(ServingActivityTypeIds.Contains(Int32.Parse(ActivityTypeValue.Value))))
             {
-                ProfileMember _profileMember = new ProfileMember(this._profileMember.ProfileID, this._profileMember.PersonID);
+                //ProfileMember _profileMember = new ProfileMember(this._profileMember.ProfileID, this._profileMember.PersonID);
                 SaveProfileMember(_profileMember);
                 Response.Redirect(HttpContext.Current.Request.Url.ToString(), false);
             }
@@ -193,8 +160,6 @@ namespace ArenaWeb.Custom.A05695.UserControls
 
             // Get the Activity Type dropdown list from the "ProfileMemberActivityList" module so we can get the selected value.
             this.ddlType = ArenaWeb.UserControls.Core.ProfileMemberActivityList.FindControlRecursive(this.Page, "ddlType") as DropDownList;
-            //ddlType.AutoPostBack = true;
-            //ddlType.SelectedIndexChanged += ddlType_SelectedIndexChanged;
         }
 
         /// <summary>
@@ -208,14 +173,11 @@ namespace ArenaWeb.Custom.A05695.UserControls
             stringBuilder.Append("\t\t$('#" + ddlTypeID + "').change(function() {\n");
             stringBuilder.Append("\t\t\tvar x = $(this).val();\n");
             stringBuilder.Append("\t\t\t$('#" + ActivityTypeValue.ClientID + "').val(x);\n");
-            stringBuilder.Append("\t\t\talert( $('#" + ActivityTypeValue.ClientID + "').val() );\n");
+            //stringBuilder.Append("\t\t\talert( $('#" + ActivityTypeValue.ClientID + "').val() );\n");
             stringBuilder.Append("\t\t\t});\n");
             stringBuilder.Append("\t\t});\n");
             stringBuilder.Append("</script>\n\n");
             this.Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "activityTypeChangeScript", ((object)stringBuilder).ToString());
         }
-
-
-        
     }
 }

@@ -4,7 +4,5 @@
 <asp:Label ID="ErrorMsg" runat="server"></asp:Label>
 <asp:Label ID="SimpleMsg" runat="server"></asp:Label>
 
-<p>[Custom User Control: MemberProfileStatusUpdater.ascx]</p>
 <asp:HiddenField ID="ActivityTypeIDs" runat="server" />
 <asp:HiddenField ID="ActivityTypeValue" runat="server" />
-<asp:DataGrid ID="dgTest" runat="server"></asp:DataGrid>
